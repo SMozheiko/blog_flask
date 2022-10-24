@@ -81,10 +81,10 @@
                   {% endif %}
               </div>
               <div class="form-group">
-                  {{ form.picture.label() }}
-                  {{ form.picture(class="form-control-file") }}
-                  {% if form.picture.errors %}
-                      {% for error in form.picture.errors %}
+                  {{ form.avatar.label() }}
+                  {{ form.avatar(class="form-control-file") }}
+                  {% if form.avatar.errors %}
+                      {% for error in form.avatar.errors %}
                           <span class="text-danger">{{ error }}</span></br>
                       {% endfor %}
                   {% endif %}

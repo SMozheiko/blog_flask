@@ -67,8 +67,25 @@
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
+            <a href="{{ url_for('posts.allpost') }}" class="nav-link nav-item navigation-links">
+                Все посты
+            </a>
           {% if current_user.is_authenticated %}
             <h4>Привет, {{ current_user.username }}!</h4>
+            <a href="{{ url_for('users.account') }}" class="nav-link nav-item navigation-links">
+                Аккаунт
+            </a>
+            <a href="{{ url_for('posts.publish') }}" class="nav-link nav-item navigation-links">
+                Новый пост
+            </a>
+            <a href="{{ url_for('users.logout') }}" class="nav-link nav-item navigation-links">
+                Выйти
+            </a>
+            <form action="{{ url_for('posts.allpost') }}" method="get">
+            {{ search.search.label() }}
+            {{ search.search() }}
+            {{ search.find() }}
+            </form>
           {% else %}
             <a href="{{ url_for('users.register') }}" class="nav-link nav-item navigation-links">
                 Зарегистрироваться
