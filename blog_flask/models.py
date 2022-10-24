@@ -24,7 +24,7 @@ class User(db.Model, UserMixin):
 
     posts = db.relationship(
         'Post',
-        backref='author',
+        back_populates='author',
         lazy=True,
         uselist=True
     )
@@ -49,7 +49,7 @@ class Post(db.Model):
 
     author = db.relationship(
         User,
-        backref='posts',
+        back_populates='posts',
         uselist=False
     )
 

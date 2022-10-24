@@ -1,7 +1,7 @@
 """Users forms"""
 from flask_login import current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FileField
+from wtforms import StringField, PasswordField, SubmitField, FileField, BooleanField
 from flask_wtf.file import FileAllowed
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from wtforms.widgets import core
@@ -34,8 +34,7 @@ class RegistrationForm(FlaskForm):
     )
     submit = SubmitField(label='Зарегистрироваться')
 
-    @staticmethod
-    def validate_username(username):
+    def validate_username(self, username):
         """Check for exist username"""
         user = User.query.filter_by(username=username.data).first()
         if user:
@@ -43,8 +42,7 @@ class RegistrationForm(FlaskForm):
                 'Пользователь с таким именем уже существует'
             )
 
-    @staticmethod
-    def validate_email(email):
+    def validate_email(self, email):
         """Check for exist email"""
         user = User.query.filter_by(username=email.data).first()
         if user:
@@ -64,6 +62,8 @@ class LoginForm(FlaskForm):
         label='Пароль',
         validators=[DataRequired()]
     )
+    remember = BooleanField('Remember')
+
     submit = SubmitField(label='Войти')
 
 
@@ -85,8 +85,7 @@ class UserProfileUpdateForm(FlaskForm):
     )
     submit = SubmitField('Сохранить')
 
-    @staticmethod
-    def validate_username(username):
+    def validate_username(self, username):
         """Check for exist username"""
         if username.data != current_user.username:
             user = User.query.filter_by(username=username.data).first()
@@ -95,8 +94,7 @@ class UserProfileUpdateForm(FlaskForm):
                     'Пользователь с таким именем уже существует'
                 )
 
-    @staticmethod
-    def validate_email(email):
+    def validate_email(self, email):
         """Check for exist email"""
 
         if email.data != current_user.email:
@@ -116,8 +114,7 @@ class ChangePasswordRequestForm(FlaskForm):
     )
     submit = SubmitField(label='Изменить пароль')
 
-    @staticmethod
-    def validate_email(email):
+    def validate_email(self, email):
         """Check for exist email"""
         user = User.query.filter_by(username=email.data).first()
         if not user:

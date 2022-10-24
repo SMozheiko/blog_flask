@@ -69,6 +69,13 @@
           </button>
           {% if current_user.is_authenticated %}
             <h4>Привет, {{ current_user.username }}!</h4>
+          {% else %}
+            <a href="{{ url_for('users.register') }}" class="nav-link nav-item navigation-links">
+                Зарегистрироваться
+            </a>
+            <a href="{{ url_for('users.login') }}" class="nav-link nav-item navigation-links">
+                Войти
+            </a>
           {% endif %}
           <div class="collapse navbar-collapse" id="navbarToggle" style="justify-content: flex-end;">
             <!-- Navbar Right Side -->
