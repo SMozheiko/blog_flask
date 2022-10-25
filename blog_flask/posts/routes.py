@@ -10,7 +10,7 @@ from blog_flask.models import Post
 from blog_flask.posts.forms import PostCreateForm
 
 
-posts = Blueprint('posts', __name__)
+posts = Blueprint('posts', __name__, url_prefix='/posts')
 
 
 @posts.route('/allpost', methods=['GET', 'POST'])
@@ -62,3 +62,37 @@ def post():
     post_id = request.args.get('post_id', 0, type=int)
     post_item = Post.query.get_or_404(post_id)
     return render_template('post.html', post=post_item)
+
+
+@posts.route('/update', methods=['GET', 'POST'])
+@login_required
+def update_post():
+    """Update post"""
+    post_id = request.args.get('post_id', 0, type=int)
+    post_item = Post.query.get_or_404(post_id)
+    if post_item.author != current_user:
+        abort(403)
+    form = PostCreateForm()
+    if form.validate_on_submit():
+        post_item.content = form.content.data
+        post_item.title = form.title.data
+        db.session.commit()
+        flash('Обновлено', 'success')
+        return redirect(url_for('posts.post', post_id=post_id))
+    elif request.method == 'GET':
+        form.title.data = post_item.title
+        form.content.data = post_item.content
+    return render_template('create_post.html', title='Обновление поста', form=form, legend='Обновление поста')
+
+
+@posts.route('/delete', methods=['POST'])
+@login_required
+def delete_post():
+    """Delete post"""
+    post_id = request.args.get('post_id', 0, type=int)
+    post_item = Post.query.filter(Post.id == post_id).one_or_none()
+    if post_item is None or post_item.author != current_user:
+        abort(403)
+    db.session.delete(post_item)
+    db.session.commit()
+    return redirect(url_for('posts.allpost'))
