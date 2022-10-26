@@ -108,7 +108,7 @@ class UserProfileUpdateForm(FlaskForm):
 class ChangePasswordRequestForm(FlaskForm):
     """Form to request users password change"""
     email = StringField(
-        label='Email',
+        label='Введите email',
         validators=[DataRequired(), Email()],
         widget=core.EmailInput()
     )
@@ -116,11 +116,12 @@ class ChangePasswordRequestForm(FlaskForm):
 
     def validate_email(self, email):
         """Check for exist email"""
-        user = User.query.filter_by(username=email.data).first()
+        user = User.query.filter(User.email == email.data).one_or_none()
         if not user:
             raise ValidationError(
                 'Пользователь с таким адресом не существует'
             )
+        self.user = user
 
 
 class ChangePasswordForm(FlaskForm):

@@ -5,7 +5,10 @@ import os
 from secrets import token_hex
 
 from flask import url_for, current_app
+from flask_mail import Message
 from PIL import Image
+
+from blog_flask import mail
 
 
 def save_picture(form_picture) -> str:
@@ -20,3 +23,12 @@ def save_picture(form_picture) -> str:
     img.save(picture_path)
 
     return picture_filename
+
+
+def send_reset_email(token: str, email: str):
+    """Send email for reset password"""
+    msg_body = 'Перейдите по ссылке {} чтобы сбросить пароль.' \
+               'Если Вы не делали запрос на смену пароля - просто' \
+               'проигнорируйте это письмо'.format(url_for('users.change_password', token=token, _external=True))
+    msg = Message(subject='password reset', recipients=[email], body=msg_body)
+    mail.send(msg)

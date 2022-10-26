@@ -3,6 +3,8 @@
 
 import datetime
 
+import jwt
+from flask import current_app
 from flask_login import UserMixin
 
 from blog_flask import db, login_manager
@@ -28,6 +30,28 @@ class User(db.Model, UserMixin):
         lazy=True,
         uselist=True
     )
+
+    def get_reset_token(self, exp=1800) -> str:
+        """Generate JWT token"""
+        exp_time = datetime.datetime.now() + datetime.timedelta(seconds=exp)
+        return jwt.encode(
+            {'user_id': self.id, 'exp': exp_time.timestamp()},
+            current_app.config['SECRET_KEY']
+        )
+
+    @classmethod
+    def verify_reset_token(cls, token: str):
+        """Check JWT token"""
+        data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+        try:
+            user_id = data.get('user_id')
+        except Exception:
+            return
+        else:
+            exp = data.get('exp')
+            if exp and datetime.datetime.now().timestamp() <= exp:
+                return cls.query.filter(User.id == user_id).one_or_none()
+            return
 
     def __repr__(self):
         return '{}'.format(self.username)
