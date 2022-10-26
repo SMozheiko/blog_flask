@@ -13,7 +13,7 @@ class PostCreateForm(FlaskForm):
     """Creation form"""
 
     title = StringField(
-        label='Загголовок',
+        label='Заголовок',
         validators=[
             DataRequired(),
             Length(min=1, max=100)

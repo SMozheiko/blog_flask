@@ -42,8 +42,8 @@ class User(db.Model, UserMixin):
     @classmethod
     def verify_reset_token(cls, token: str):
         """Check JWT token"""
-        data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
         try:
+            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
             user_id = data.get('user_id')
         except Exception:
             return

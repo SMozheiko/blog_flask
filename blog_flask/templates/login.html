@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div class="content-section" style="box-shadow: 10px 15px 10px #4a4e69;">
+    <div class="content-section">
         <form method="POST" action="">
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
@@ -37,10 +37,7 @@
                 </div>
             </fieldset>
             <div class="form-group">
-                {{ form.submit(class="btn btn-outline-info") }}
-
-
-
+                {{ form.submit(class="action-button ok") }}
             </div>
             <small style="font-size: 15px; font-weight: 500;">
                 Нужен аккаунт? <a class="ml-2" href="{{ url_for('users.register') }}">Зарегистрируйтесь</a>

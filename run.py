@@ -1,3 +1,5 @@
+import datetime
+
 from blog_flask import create_app, db
 from blog_flask.models import User, Post
 from blog_flask.context_processsors import SearchForm
@@ -11,6 +13,12 @@ with app.app_context():
 def search():
     form = SearchForm()
     return dict(search=form)
+
+
+@app.context_processor
+def year():
+    today_year = datetime.datetime.now().year
+    return dict(year=today_year)
 
 
 if __name__ == '__main__':

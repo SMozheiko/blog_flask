@@ -95,4 +95,5 @@ def delete_post():
         abort(403)
     db.session.delete(post_item)
     db.session.commit()
+    flash('Пост удален', 'success')
     return redirect(url_for('posts.allpost'))

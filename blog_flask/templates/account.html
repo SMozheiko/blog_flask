@@ -1,44 +1,4 @@
 {% extends "layout.html" %}
-
-{% block head %}
-  <style>
-    .container{
-      margin-bottom: 0.8rem;
-    }
-
-    .content-section{
-      box-shadow: 10px 20px 8px darkslategray;
-    }
-
-    .card{
-      border-radius: 25px;
-      /* border-top-right-radius: 25px;
-      border-bottom-left-radius: 25px; */
-      background-color:  white; 
-      box-shadow: 10px 15px 10px #4a4e69;
-      width: 92%;
-    }
-
-    a{
-      color: #003049;
-    }
-
-    small{
-      color: lightslategray;
-    }
-
-    p{
-      color: rgb(43, 37, 37);
-    }
-    
-    /* i{
-      padding: 0px 7px;
-      cursor: pointer;
-    } */
-  </style>
-{% endblock head %}
-
-
 {% block content %}
     <div class="content-section">
       <div class="media">
@@ -91,11 +51,8 @@
               </div>
           </fieldset>
           <div class="form-group">
-              {{ form.submit(class="btn btn-outline-info") }}
+              {{ form.submit(class="action-button ok") }}
           </div>
       </form>      
-    </div>   
-
-
-
+    </div>
 {% endblock content %}
