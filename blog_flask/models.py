@@ -16,7 +16,18 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-class User(db.Model, UserMixin):
+class SaveMixin:
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+class User(db.Model, UserMixin, SaveMixin):
     """User class"""
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -26,6 +37,13 @@ class User(db.Model, UserMixin):
 
     posts = db.relationship(
         'Post',
+        back_populates='author',
+        lazy=True,
+        uselist=True
+    )
+
+    comments = db.relationship(
+        'Comment',
         back_populates='author',
         lazy=True,
         uselist=True
@@ -57,7 +75,7 @@ class User(db.Model, UserMixin):
         return '{}'.format(self.username)
 
 
-class Post(db.Model):
+class Post(db.Model, SaveMixin):
     """Post model"""
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -76,6 +94,32 @@ class Post(db.Model):
         back_populates='posts',
         uselist=False
     )
+    comments = db.relationship(
+        'Comment',
+        back_populates='post',
+        uselist=True
+    )
 
     def __repr__(self):
         return '{}, {}, {}'.format(self.title, self.created_at.strftime('%Y-%m-%d %H:%M'), self.author)
+
+
+class Comment(db.Model, SaveMixin):
+    """Posts comments"""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete="CASCADE", onupdate='CASCADE'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id', ondelete="CASCADE", onupdate='CASCADE'), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow())
+    author = db.relationship(
+        User,
+        back_populates='comments',
+        foreign_keys=[user_id],
+        uselist=False
+    )
+    post = db.relationship(
+        Post,
+        back_populates='comments',
+        foreign_keys=[post_id],
+        uselist=False
+    )

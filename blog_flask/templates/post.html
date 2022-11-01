@@ -20,6 +20,67 @@
           <button type="button" class="action-button notok" data-toggle="modal" data-target="#deleteModal">Удалить</button>
         {% endif %}
       </div>
+    <form action="{{ url_for('posts.comment', post_id=post.id) }}" method="post">
+      {{ form.hidden_tag() }}
+        <div class="comment-form">
+            <h3>{{ form.content.label(class="comments-small-title") }}</h3>
+            {% if form.content.errors %}
+                {{ form.content(class="comment-content is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.content.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ form.content(class="comment-content", rows=10, cols=80) }}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="action-button ok") }}
+        </div>
+    </form>
+    <h3 class="comments-title">Все комментарии</h3>
+    <ul class="card-comments">
+      {% for comment in post.comments %}
+      {% if not comment_id or comment.id != comment_id %}
+      <li class="card-comment">
+        <div class="comment-author">
+          <a class="navbar-user card-title card-author" href="{{ url_for('users.user_posts', username=comment.author.username) }}">{{ comment.author.username }}</a>
+          {% if comment.author == current_user %}
+          <a href="{{ url_for('posts.edit_comment', comment_id=comment.id) }}">&#9997;</a>
+          <button class="delete-comment" data-action="{{ url_for('posts.delete_comment', comment_id=comment.id) }}">&#10060;</button>
+          {% endif %}
+        </div>
+        <small class="comment-date">
+          {{ comment.created_at }}
+        </small>
+        <div class="comment-content">
+          {{ comment.content }}
+        </div>
+      </li>
+      {% else %}
+      <form class="card-comment" action="{{ url_for('posts.edit_comment', comment_id=comment.id) }}" method="post">
+        {{ edit_form.hidden_tag() }}
+          <div>
+              <h3>Редактирование</h3>
+              {% if edit_form.content.errors %}
+                  {{ edit_form.content(class="comment-content is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in edit_form.content.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ edit_form.content(class="comment-content", rows=10, cols=80) }}
+              {% endif %}
+          </div>
+          <div class="form-group">
+              {{ edit_form.submit(class="action-button ok", value='Сохранить') }}
+          </div>
+      </form>
+        {% endif %}
+      {% endfor %}
+    </ul>
   </div>
 </div>
   
@@ -39,4 +100,20 @@
       </div>
     </div>
   </div>
+    <div class="modal" id="delete-comment-modal" tabindex="-1" aria-hidden="true" hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Удалить комментарий?</h5>
+            </div>
+            <form id="delete-comment-form" class="modal-footer" action="" method="post">
+                <button type="button" class="action-button ok" data-dismiss="modal">Отмена</button>
+                <input class="action-button notok" type="submit" value="Удалить">
+            </form>
+          </div>
+        </div>
+    </div>
 {% endblock content %}
+{% block js %}
+<script src="{{ url_for('static', filename='js/post.js') }}"></script>
+{% endblock %}

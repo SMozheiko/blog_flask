@@ -6,8 +6,8 @@ from flask_login import current_user, login_required
 from sqlalchemy import or_
 
 from blog_flask import db
-from blog_flask.models import Post
-from blog_flask.posts.forms import PostCreateForm
+from blog_flask.models import Post, Comment
+from blog_flask.posts.forms import PostCreateForm, CommentForm
 
 
 posts = Blueprint('posts', __name__, url_prefix='/posts')
@@ -49,8 +49,7 @@ def publish():
             created_at=datetime.datetime.utcnow(),
             author=current_user
         )
-        db.session.add(post_item)
-        db.session.commit()
+        post_item.save()
         flash('Опубликовано', 'success')
         return redirect(url_for('posts.allpost'))
     return render_template('create_post.html', title='Новый пост', form=form)
@@ -61,7 +60,9 @@ def post():
     """Post detail page"""
     post_id = request.args.get('post_id', 0, type=int)
     post_item = Post.query.get_or_404(post_id)
-    return render_template('post.html', post=post_item)
+    form = CommentForm()
+    post_item.comments.sort(key=lambda x: x.created_at, reverse=True)
+    return render_template('post.html', post=post_item, form=form)
 
 
 @posts.route('/update', methods=['GET', 'POST'])
@@ -76,7 +77,7 @@ def update_post():
     if form.validate_on_submit():
         post_item.content = form.content.data
         post_item.title = form.title.data
-        db.session.commit()
+        post_item.save()
         flash('Обновлено', 'success')
         return redirect(url_for('posts.post', post_id=post_id))
     elif request.method == 'GET':
@@ -93,7 +94,65 @@ def delete_post():
     post_item = Post.query.filter(Post.id == post_id).one_or_none()
     if post_item is None or post_item.author != current_user:
         abort(403)
-    db.session.delete(post_item)
-    db.session.commit()
+    post_item.delete()
     flash('Пост удален', 'success')
     return redirect(url_for('posts.allpost'))
+
+
+@posts.route('/comment', methods=['POST'])
+@login_required
+def comment():
+    """Add comment"""
+    post_id = request.args.get('post_id', 0, type=int)
+    post_item = Post.query.filter(Post.id == post_id).one_or_none()
+    if post_item is None:
+        abort(404)
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment_obj = Comment(
+            content=form.content.data,
+            created_at=datetime.datetime.now(),
+            author=current_user,
+            post=post_item
+        )
+        comment_obj.save()
+        flash('Успешно!', 'success')
+        return redirect(url_for('posts.post', post_id=post_item.id))
+
+
+@posts.route('/edit_comment', methods=['GET', 'POST'])
+@login_required
+def edit_comment():
+    """Edit comment"""
+    comment_id = request.args.get('comment_id', 0, type=int)
+    comment_item = Comment.query.filter(Comment.id == comment_id).one_or_none()
+    if comment_item is None:
+        abort(404)
+    if comment_item.author != current_user:
+        abort(403)
+    edit_form = CommentForm()
+    if edit_form.validate_on_submit():
+        comment_item.content = edit_form.content.data
+        comment_item.created_at = datetime.datetime.now()
+        comment_item.save()
+        flash('Обновлено!', 'success')
+        return redirect(url_for('posts.post', post_id=comment_item.post.id))
+    edit_form.content.data = comment_item.content
+    form = CommentForm()
+    comment_item.post.comments.sort(key=lambda x: x.created_at, reverse=True)
+    return render_template('post.html', post=comment_item.post, form=form, edit_form=edit_form, comment_id=comment_id)
+
+
+@posts.route('/delete_comment', methods=['POST'])
+@login_required
+def delete_comment():
+    """Delete comment"""
+    comment_id = request.args.get('comment_id', 0, type=int)
+    comment_item = Comment.query.filter(Comment.id == comment_id).one_or_none()
+    post_id = comment_item.post_id
+    if comment_item is None:
+        abort(404)
+    if comment_item.author != current_user:
+        abort(403)
+    comment_item.delete()
+    return redirect(url_for('posts.post', post_id=post_id))

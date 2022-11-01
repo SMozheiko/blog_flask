@@ -27,8 +27,7 @@ def register():
             email=form.email.data,
             password=hashed_password
         )
-        db.session.add(user)
-        db.session.commit()
+        user.save()
         flash("Регистрация прошла успешно", "success")
         return redirect(url_for('users.login'))
     return render_template('register.html', title='Register', form=form)
@@ -137,7 +136,6 @@ def change_password():
         user_id = request.args.get('user_id', type=int)
         user = User.query.get(user_id)
         user.password = hashed_password
-        db.session.add(user)
-        db.session.commit()
+        user.save()
         flash('Успешно!',  'success')
         return redirect(url_for('users.login'))

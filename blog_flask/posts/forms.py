@@ -24,3 +24,15 @@ class PostCreateForm(FlaskForm):
         validators=[DataRequired()]
     )
     submit = SubmitField('Опубликовать')
+
+
+class CommentForm(FlaskForm):
+    """Create comment form"""
+
+    content = TextAreaField(
+        label='Комментарий',
+        validators=[
+            DataRequired()
+        ],
+    )
+    submit = SubmitField('Комментировать')

@@ -144,7 +144,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: 20px;
   border: 1px solid grey;
   border-radius: 25px;
-  background-color:  white;
+  background-color:  rgba(218, 218, 218,50%);
   box-shadow: 10px 10px 20px #4a4e69;
   margin: 20px 0;
 }
@@ -281,4 +281,44 @@ small {
   background-color: #71bee7;
   color: #193c69;
   border: 1px #193c69 solid;
+}
+.comment-form {
+  border: none;
+  display: flex;
+  flex-direction: column;
+  margin: 20px auto;
+}
+.comment-content {
+  box-sizing: border-box;
+  border-radius: 10px;
+  margin: 10px auto;
+  width: 100%;
+  padding: 10px;
+}
+.card-comments {
+  list-style: none;
+  padding: 0;
+}
+.comments-title {
+  font-size: 20px;
+}
+.comments-small-title {
+  font-size: 20px;
+}
+.card-comment {
+  border: #444444 solid 1px;
+  margin: 20px auto;
+  width: 90%;
+  border-radius: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  box-shadow: 10px 10px 20px #4a4e69;
+  background-color: #fff;
+}
+#delete-comment-modal {
+  display: none;
+}
+.delete-comment {
+    border: none;
+    cursor: pointer;
 }
