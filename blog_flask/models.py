@@ -51,6 +51,12 @@ class User(db.Model, UserMixin, SaveMixin):
         cascade='all, delete-orphan'
     )
 
+    likes = db.relationship(
+        'Like',
+        back_populates='user',
+        uselist=True
+    )
+
     def get_reset_token(self, exp=1800) -> str:
         """Generate JWT token"""
         exp_time = datetime.datetime.now() + datetime.timedelta(seconds=exp)
@@ -110,6 +116,12 @@ class Post(db.Model, SaveMixin):
         lazy='select'
     )
 
+    likes = db.relationship(
+        'Like',
+        back_populates='post',
+        uselist=True
+    )
+
     def __repr__(self):
         return '{}, {}, {}'.format(self.title, self.created_at.strftime('%Y-%m-%d %H:%M'), self.author)
 
@@ -146,5 +158,24 @@ class Images(db.Model, SaveMixin):
         Post,
         back_populates='images',
         foreign_keys=[post_id],
+        uselist=False
+    )
+
+
+class Like(db.Model, SaveMixin):
+    """Posts likes"""
+    __table_args__ = (db.PrimaryKeyConstraint('user_id', 'post_id', name='CompositePkForLike'),)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete="CASCADE", onupdate='CASCADE'))
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id', ondelete="CASCADE", onupdate='CASCADE'))
+
+    user = db.relationship(
+        User,
+        back_populates='likes',
+        uselist=False
+    )
+    post = db.relationship(
+        Post,
+        back_populates='likes',
         uselist=False
     )

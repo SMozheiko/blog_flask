@@ -6,6 +6,7 @@ from flask_bcrypt import Bcrypt
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_migrate import Migrate
 
 from blog_flask.config import Config
 
@@ -25,6 +26,8 @@ def create_app() -> Flask:
     mail.init_app(app)
 
     login_manager.init_app(app)
+    migrate = Migrate(app, db)
+
     from blog_flask.users.routes import login
     login_manager.unauthorized_callback = login
     bcrypt.init_app(app)

@@ -10,10 +10,12 @@
     <div class="card">
       <div class="card-body">
         <h4 class="card-title"><a class="navbar-user card-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h4>
-
         <small>Опубликовано {{ post.created_at.strftime('%A, %d %B %Y %I:%M %p') }}</small>
-        <br>
-        <br>
+        <div class="likes">
+          <i class="fa fa-heart heart heart-red small-heart" aria-hidden="true"></i>
+          <span class="small-heart">{{ post.likes | length }}</span>
+          <span class="small-heart">&#9997; {{ post.comments | length }}</span>
+        </div>
         <p class="card-text">{{ post.content }}</p>
       </div>
     </div>

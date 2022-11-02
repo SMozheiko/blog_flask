@@ -1,5 +1,5 @@
 "use strict";
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
     let deleteComments = document.querySelectorAll('.delete-comment');
     deleteComments.forEach((el) => {
         el.addEventListener('click', event => {
@@ -13,5 +13,21 @@ window.addEventListener('load', () => {
                 }
             })
         })
+    });
+    let like = document.querySelector('.heart');
+    like.addEventListener('click', async (event) => {
+        const request = new Request(
+            event.target.dataset.url,
+            {
+                method: 'POST'
+            }
+        );
+        const response = await fetch(request).then(
+            result => result.json()
+        ).catch(error => console.log(error));
+        if (response.status === 'ok') {
+            event.target.classList.toggle('heart-red');
+            event.target.nextElementSibling.innerText = response.likes;
+        }
     })
 })

@@ -4,10 +4,12 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Stalinist+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fonts/css/font-awesome.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fonts/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
     {% if title %}
         <title>Flask-блог - {{ title }}</title>
@@ -23,23 +25,13 @@
         <div class="wrapper">
           <div class="navbar">
             <div class="navbar-main">
-                <a class="navbar-brand" href="/">Мой блог</a>
-                <a href="{{ url_for('posts.allpost') }}" class="nav-link nav-item navigation-links">
-                    Все посты
-                </a>
-                <form class="search" action="{{ url_for('posts.allpost') }}" method="get">
-                    {{ search.search(class="search-input", placeholder="Введите текст для поиска...") }}
-                    {{ search.find(class="search-button") }}
-                </form>
+                <a class="navbar-brand" href="/">Диалоги о рыбалке</a>
             </div>
             <div class="navbar-profile">
                 {% if current_user.is_authenticated %}
                     <h4 class="navbar-user">Привет, {{ current_user.username }}!</h4>
                     <a href="{{ url_for('users.account') }}" class="nav-link nav-item navigation-links">
                         Аккаунт
-                    </a>
-                    <a href="{{ url_for('posts.publish') }}" class="nav-link nav-item navigation-links">
-                        Новый пост
                     </a>
                     <a href="{{ url_for('users.logout') }}" class="nav-link nav-item navigation-links">
                         Выйти
@@ -54,6 +46,31 @@
                 {% endif %}
             </div>
           </div>
+            <ul class="menu">
+                <li>
+                    <a href="{{ url_for('posts.allpost') }}" class="nav-link nav-item navigation-links">
+                        Все посты
+                    </a>
+                </li>
+                <li>
+                    <form class="search" action="{{ url_for('posts.allpost') }}" method="get">
+                        {{ search.search(class="search-input", placeholder="Введите текст для поиска...") }}
+                        {{ search.find(class="search-button") }}
+                    </form>
+                </li>
+                {% if current_user.is_authenticated %}
+                <li>
+                    <a href="{{ url_for('posts.publish') }}" class="nav-link nav-item navigation-links">
+                        Новый пост
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('posts.allpost', favorites=1) }}" class="nav-link nav-item navigation-links">
+                        Избранное
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
             <div class="content">
                 {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}

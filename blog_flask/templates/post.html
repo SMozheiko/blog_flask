@@ -28,6 +28,8 @@
           <a class="action-button ok" href="{{url_for('posts.update_post', post_id=post.id) }}">Обновить</a>
           <button type="button" class="action-button notok" data-toggle="modal" data-target="#deleteModal">Удалить</button>
         {% endif %}
+          <i class="fa fa-heart heart{% if liked %} heart-red{% endif %}" aria-hidden="true" data-url="{{ url_for('posts.like', post_id=post.id) }}"></i>
+          <span class="likes-count">{{ likes }}</span>
       </div>
     <form action="{{ url_for('posts.comment', post_id=post.id) }}" method="post">
       {{ form.hidden_tag() }}
