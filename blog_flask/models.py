@@ -39,14 +39,16 @@ class User(db.Model, UserMixin, SaveMixin):
         'Post',
         back_populates='author',
         lazy=True,
-        uselist=True
+        uselist=True,
+        cascade='all, delete-orphan'
     )
 
     comments = db.relationship(
         'Comment',
         back_populates='author',
         lazy=True,
-        uselist=True
+        uselist=True,
+        cascade='all, delete-orphan'
     )
 
     def get_reset_token(self, exp=1800) -> str:
@@ -97,7 +99,15 @@ class Post(db.Model, SaveMixin):
     comments = db.relationship(
         'Comment',
         back_populates='post',
-        uselist=True
+        uselist=True,
+        cascade='all, delete-orphan'
+    )
+    images = db.relationship(
+        'Images',
+        back_populates='post',
+        uselist=True,
+        cascade='all, delete-orphan',
+        lazy='select'
     )
 
     def __repr__(self):
@@ -120,6 +130,21 @@ class Comment(db.Model, SaveMixin):
     post = db.relationship(
         Post,
         back_populates='comments',
+        foreign_keys=[post_id],
+        uselist=False
+    )
+
+
+class Images(db.Model, SaveMixin):
+    """Posts images"""
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id', ondelete="CASCADE", onupdate='CASCADE'), nullable=False)
+    content = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow())
+
+    post = db.relationship(
+        Post,
+        back_populates='images',
         foreign_keys=[post_id],
         uselist=False
     )

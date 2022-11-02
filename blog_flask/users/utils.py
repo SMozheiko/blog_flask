@@ -11,13 +11,17 @@ from PIL import Image
 from blog_flask import mail
 
 
-def save_picture(form_picture) -> str:
+def save_picture(form_picture, post: bool = False) -> str:
     """Saves uploaded user avatar"""
     random_hex = token_hex(8)
     _, file_extension = os.path.splitext(form_picture.filename)
     picture_filename = random_hex + file_extension
-    picture_path = os.path.join(current_app.root_path, 'static/profile_pictures', picture_filename)
-    output_size = (150, 150)
+    if post:
+        picture_path = os.path.join(current_app.root_path, 'static/post_pictures', picture_filename)
+        output_size = (1280, 1024)
+    else:
+        picture_path = os.path.join(current_app.root_path, 'static/profile_pictures', picture_filename)
+        output_size = (150, 150)
     img = Image.open(form_picture)
     img.thumbnail(output_size)
     img.save(picture_path)

@@ -5,8 +5,8 @@ from flask import render_template, url_for, flash, redirect, request, abort, Blu
 from flask_login import current_user, login_required
 from sqlalchemy import or_
 
-from blog_flask import db
-from blog_flask.models import Post, Comment
+from blog_flask.users.utils import save_picture
+from blog_flask.models import Post, Comment, Images
 from blog_flask.posts.forms import PostCreateForm, CommentForm
 
 
@@ -49,7 +49,16 @@ def publish():
             created_at=datetime.datetime.utcnow(),
             author=current_user
         )
-        post_item.save()
+        if form.picture.data:
+            img = save_picture(form.picture.data, post=True)
+            image_obj = Images(
+                post=post_item,
+                content=img,
+                created_at=datetime.datetime.now()
+            )
+            image_obj.save()
+        else:
+            post_item.save()
         flash('Опубликовано', 'success')
         return redirect(url_for('posts.allpost'))
     return render_template('create_post.html', title='Новый пост', form=form)
@@ -77,7 +86,16 @@ def update_post():
     if form.validate_on_submit():
         post_item.content = form.content.data
         post_item.title = form.title.data
-        post_item.save()
+        if form.picture.data:
+            img = save_picture(form.picture.data, post=True)
+            image_obj = Images(
+                post=post_item,
+                content=img,
+                created_at=datetime.datetime.now()
+            )
+            image_obj.save()
+        else:
+            post_item.save()
         flash('Обновлено', 'success')
         return redirect(url_for('posts.post', post_id=post_id))
     elif request.method == 'GET':

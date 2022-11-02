@@ -45,7 +45,8 @@
                   {{ form.avatar(class="form-control-file") }}
                   {% if form.avatar.errors %}
                       {% for error in form.avatar.errors %}
-                          <span class="text-danger">{{ error }}</span></br>
+                          <span class="text-danger">{{ error }}</span>
+                            </br>
                       {% endfor %}
                   {% endif %}
               </div>

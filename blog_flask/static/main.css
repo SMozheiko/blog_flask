@@ -322,3 +322,15 @@ small {
     border: none;
     cursor: pointer;
 }
+.post-images {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 30%;
+  box-sizing: border-box;
+}
+.post-image {
+  width: 320px;
+  height: 256px;
+  margin: 0 10px;
+  cursor: pointer;
+}

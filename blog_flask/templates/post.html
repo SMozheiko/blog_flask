@@ -12,7 +12,16 @@
       <small>Опубликовано {{ post.created_at.strftime('%A, %d %B %Y %I:%M %p') }}</small>
       <br>
       <br>
-      <p class="card-text">{{ post.content }}</p>
+      <p class="card-text">
+          {% if post.images %}
+            <div class="post-images">
+                {% for image in post.images %}
+                <img class="post-image" src="{{ url_for('static', filename='post_pictures/' + image.content) }}" data-id="{{ image.id }}" alt="image">
+                {% endfor %}
+            </div>
+          {% endif %}
+          {{ post.content }}
+      </p>
     </div>
       <div class="card-footer">
         {% if post.author == current_user %}
@@ -39,7 +48,7 @@
             {{ form.submit(class="action-button ok") }}
         </div>
     </form>
-    <h3 class="comments-title">Все комментарии</h3>
+    <h3 class="comments-title">{% if post.comments %}Все комментарии{% else %}Комментариев пока нет{% endif %}</h3>
     <ul class="card-comments">
       {% for comment in post.comments %}
       {% if not comment_id or comment.id != comment_id %}

@@ -3,7 +3,8 @@
 
 from flask_login import current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField
+from flask_wtf.file import FileAllowed
+from wtforms import StringField, TextAreaField, SubmitField, FileField
 from wtforms.validators import DataRequired, ValidationError, Length
 
 from blog_flask.models import User, Post
@@ -22,6 +23,10 @@ class PostCreateForm(FlaskForm):
     content = TextAreaField(
         label='Содержание',
         validators=[DataRequired()]
+    )
+    picture = FileField(
+        label='Добавить изображение',
+        validators=[FileAllowed(['png', 'jpg'])]
     )
     submit = SubmitField('Опубликовать')
 
