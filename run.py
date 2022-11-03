@@ -1,10 +1,8 @@
 import datetime
 
-from blog_flask import create_app
+from blog_flask.admin import app
 from blog_flask.models import User, Post
 from blog_flask.context_processsors import SearchForm
-
-app = create_app()
 
 
 @app.context_processor
